@@ -26,6 +26,7 @@ Ian Moffitt - 2012
 			// Stored Values
 			base.length = $(base.options.slide, base.$el).length;	
 			base.rotTimeout = 0;
+			base.first = $(base.options.slide, base.$el).eq(0);
 
             // Put your initialization code here
             base.readyShow();
@@ -45,6 +46,50 @@ Ian Moffitt - 2012
 			// Remove current class if it is assigned
 			$(base.options.slide, base.$el).removeClass(base.options.currentClass);
 			
+			console.log(base.first);
+			
+			// "Preloading" the first slide. They see a loading animation until the image is fully loaded. There 
+			// might be a flash of the image filling in on certain browsers, but they will not see the image while it is barely loaded.
+			if (base.options.preload) {
+				
+				base.$el.append('<div class="loading"><img src="'+base.options.loadimage+'" alt="Loading..." /></div>');
+				
+				base.first.find('img').load('/'+base.first.find('img').attr('src'), function() {
+					base.setupImages();
+					base.$el.find('.loading').remove();
+				});
+					
+			} else {
+				base.setupImages();	
+			}
+			
+			
+			
+		}
+		
+		base.buildPager = function() {
+			
+			base.$el.append("<div class='pager'><ul><li class='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li class='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
+			
+		}
+		
+		base.bindEvents = function() {
+		
+			$('.'+base.options.prevSelector + ' a', base.$el).on('click', function() {
+				
+				base.prev();
+				
+			});
+			
+			$('.'+base.options.nextSelector + ' a', base.$el).on('click', function() {
+				
+				base.next();
+				
+			});
+			
+		}
+		
+		base.setupImages = function() {
 			$(base.options.slide, base.$el).each(function(index) {
 				if (base.options.startIndex <= base.length && base.options.startIndex != 0) {
 					if (index != (base.options.startIndex - 1)) {
@@ -65,30 +110,7 @@ Ian Moffitt - 2012
 						$(this).css('zIndex','400').addClass(base.options.currentClass);
 					}
 				}
-			});
-			
-		}
-		
-		base.buildPager = function() {
-			
-			base.$el.append("<div class='pager'><ul><li id='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li id='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
-			
-		}
-		
-		base.bindEvents = function() {
-		
-			$('a','#'+base.options.prevSelector).on('click', function() {
-				
-				base.prev();
-				
-			});
-			
-			$('a','#'+base.options.nextSelector).on('click', function() {
-				
-				base.next();
-				
-			});
-			
+			});	
 		}
 		
 		base.auto = function() {
@@ -164,7 +186,10 @@ Ian Moffitt - 2012
 		prevSelector: 'ez-prev',
 		speed: 600,
 		timing: 3000,
-		autorotate: true
+		autorotate: true,
+		preload: false,
+		loadimage: '',
+		loadbg: ''
     };
 
     $.fn.easySlider = function(options)
