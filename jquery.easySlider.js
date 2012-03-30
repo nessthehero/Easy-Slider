@@ -5,6 +5,8 @@ Easy Slider
 
 Ian Moffitt - 2012
 
+License: http://www.opensource.org/licenses/mit-license.html
+
 */
 (function($) {
 	$.easySlider = function(el, options) {
@@ -55,37 +57,46 @@ Ian Moffitt - 2012
 				base.$el.append('<div class="loading"><img src="'+base.options.loadimage+'" alt="Loading..." /></div>');
 				
 				base.first.find('img').load('/'+base.first.find('img').attr('src'), function() {
-					base.setupImages();
-					base.$el.find('.loading').remove();
+					base.$el.find('ul').css('opacity','0');
+			//		base.$el.hide();
+					base.setupImages();					
+					setTimeout(function() { 
+						base.$el.find('ul').animate({'opacity':'1'}, 1000, 'linear'); 
+						base.$el.find('.loading').remove();
+					}, 1000);
+			//		setTimeout(function() { base.$el.fadeIn('slow'); }, 1000);
+					
 				});
 					
 			} else {
 				base.setupImages();	
-			}
-			
-			
+			}			
 			
 		}
 		
 		base.buildPager = function() {
 			
-			base.$el.append("<div class='pager'><ul><li class='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li class='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
+			if (base.options.paging) {
+				base.$el.append("<div class='pager'><ul><li class='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li class='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
+			}	
 			
 		}
 		
 		base.bindEvents = function() {
 		
-			$('.'+base.options.prevSelector + ' a', base.$el).on('click', function() {
+			if (base.options.paging) {
+				$('.'+base.options.prevSelector + ' a', base.$el).on('click', function() {
+					
+					base.prev();
+					
+				});
 				
-				base.prev();
-				
-			});
-			
-			$('.'+base.options.nextSelector + ' a', base.$el).on('click', function() {
-				
-				base.next();
-				
-			});
+				$('.'+base.options.nextSelector + ' a', base.$el).on('click', function() {
+					
+					base.next();
+					
+				});
+			}
 			
 		}
 		
@@ -124,20 +135,20 @@ Ian Moffitt - 2012
 		
 		base.next = function() {
 		
-			var	currentSlide = $('.'+base.options.currentClass),
+			var	currentSlide = $('.'+base.options.currentClass, base.$el),
 				index = currentSlide.index() + 1, 
 				next;
 	
 			if ((index + 1) > base.length) { next = 1; } else { next = index + 1; }	
 			
-			var nextSlide = $(base.options.slide+':nth-child('+next+')');			
+			var nextSlide = $(base.options.slide+':nth-child('+next+')', base.$el);			
 			
 			switch (base.options.effect) {
 				case 'fade':
 				default: 
 					currentSlide.fadeTo(base.options.speed, 0).css('zIndex', 300);
 					nextSlide.css('zIndex', 400).fadeTo(base.options.speed, 1, function () {
-						$(base.options.slide).removeClass(base.options.currentClass);
+						$(base.options.slide,base.$el).removeClass(base.options.currentClass);
 						$(this).addClass(base.options.currentClass);
 						base.auto();
 					});					
@@ -148,20 +159,20 @@ Ian Moffitt - 2012
 		
 		base.prev = function() {
 		
-			var currentSlide = $('.'+base.options.currentClass),
+			var currentSlide = $('.'+base.options.currentClass,base.$el),
 				index = currentSlide.index() + 1, 
 				prev;
 	
 			if ((index - 1) == 0) { prev = base.length; } else { prev = index - 1; }
 			
-			var prevSlide = $(base.options.slide+':nth-child('+prev+')');
+			var prevSlide = $(base.options.slide+':nth-child('+prev+')',base.$el);
 			
 			switch (base.options.effect) {
 				case 'fade':
 				default: 
 					currentSlide.fadeTo(base.options.speed, 0).css('zIndex', 300);
 					prevSlide.css('zIndex', 400).fadeTo(base.options.speed, 1, function () {
-						$(base.options.slide).removeClass(base.options.currentClass);
+						$(base.options.slide,base.$el).removeClass(base.options.currentClass);
 						$(this).addClass(base.options.currentClass);
 						base.auto();
 					});				
@@ -179,7 +190,8 @@ Ian Moffitt - 2012
     	effect: 'fade',
 		slide: '.slide',
 		currentClass: 'current-ez-slide',
-		startIndex: 1, /* Not used yet */
+		startIndex: 1,
+		paging: true,
 		nextText: 'next',
 		prevText: 'prev',
 		nextSelector: 'ez-next',
