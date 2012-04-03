@@ -32,7 +32,6 @@ License: http://www.opensource.org/licenses/mit-license.html
 
             // Put your initialization code here
             base.readyShow();
-			base.buildPager();
 			base.bindEvents();
 			
 			if (base.options.autorotate) {
@@ -56,21 +55,48 @@ License: http://www.opensource.org/licenses/mit-license.html
 				
 				base.$el.append('<div class="loading"><img src="'+base.options.loadimage+'" alt="Loading..." /></div>');
 				
-				base.first.find('img').load('/'+base.first.find('img').attr('src'), function() {
-					base.$el.find('ul').css('opacity','0');
-			//		base.$el.hide();
-					base.setupImages();					
-					setTimeout(function() { 
-						base.$el.find('ul').animate({'opacity':'1'}, 1000, 'linear'); 
-						base.$el.find('.loading').remove();
-					}, 1000);
-			//		setTimeout(function() { base.$el.fadeIn('slow'); }, 1000);
+				switch (base.options.preloadMethod) {
 					
-				});
+					case 'img':				
+						console.log('/'+base.first.find('img').attr('src'));
+						base.first.find('img').load('/'+base.first.find('img').attr('src'), function() {
+							base.$el.find('ul').css('opacity','0');
+					//		base.$el.hide();
+							base.setupImages();					
+							setTimeout(function() { 
+								base.$el.find('ul').animate({'opacity':'1'}, 1000, 'linear'); 
+								base.$el.find('.loading').remove();
+							}, 1000);
+					//		setTimeout(function() { base.$el.fadeIn('slow'); }, 1000);
+							
+						});
+						break;
+					
+					case 'bg':
+						// I'm so sorry . . .
+						var bgSrc = base.first.css('background-image').toString().replace(/url\(/,'').replace(/\)/,'').replace(/https?:\/\/(.+)\.com\//,'').toString();
+						var bgImg = new Image();
+						bgImg.src = bgSrc;
+						base.first.load('/'+bgImg.src, function() {
+							base.$el.find('ul').css('opacity','0');
+					//		base.$el.hide();
+							base.setupImages();					
+							setTimeout(function() { 
+								base.$el.find('ul').animate({'opacity':'1'}, 1000, 'linear'); 
+								base.$el.find('.loading').remove();
+							}, 1000);
+					//		setTimeout(function() { base.$el.fadeIn('slow'); }, 1000);
+							
+						});
+						break;
+				}
 					
 			} else {
 				base.setupImages();	
 			}			
+			
+			base.buildPager();
+
 			
 		}
 		
@@ -200,8 +226,9 @@ License: http://www.opensource.org/licenses/mit-license.html
 		timing: 3000,
 		autorotate: true,
 		preload: false,
+		preloadMethod: 'img',
 		loadimage: '',
-		loadbg: ''
+		loadbg: '' /* Not being used */
     };
 
     $.fn.easySlider = function(options)
