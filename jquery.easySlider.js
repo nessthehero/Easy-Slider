@@ -61,19 +61,17 @@ License: http://www.opensource.org/licenses/mit-license.html
 						console.log('/'+base.first.find('img').attr('src'));
 						base.first.find('img').load('/'+base.first.find('img').attr('src'), function() {
 							base.$el.find('ul').css('opacity','0');
-					//		base.$el.hide();
 							base.setupImages();					
 							setTimeout(function() { 
 								base.$el.find('ul').animate({'opacity':'1'}, 1000, 'linear'); 
 								base.$el.find('.loading').remove();
 							}, 1000);
-					//		setTimeout(function() { base.$el.fadeIn('slow'); }, 1000);
 							
 						});
 						break;
 					
 					case 'bg':
-						// I'm so sorry . . .
+						// I'm so sorry . . . okay it's not that bad
 						var bgSrc = base.first.css('background-image').toString().replace(/url\(/,'').replace(/\)/,'').replace(/https?:\/\/(.+)\.com\//,'').toString();
 						var bgImg = new Image();
 						bgImg.src = bgSrc;
@@ -96,14 +94,15 @@ License: http://www.opensource.org/licenses/mit-license.html
 			}			
 			
 			base.buildPager();
-
 			
 		}
 		
 		base.buildPager = function() {
 			
 			if (base.options.paging) {
-				base.$el.append("<div class='pager'><ul><li class='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li class='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
+				if (base.length > 1) {
+					base.$el.append("<div class='pager'><ul><li class='"+base.options.prevSelector+"'><a class='ir' href='javascript:;'>"+base.options.prevText+"</a></li><li class='"+base.options.nextSelector+"'><a class='ir' href='javascript:;'>"+base.options.nextText+"</a></li></ul></div>");
+				}
 			}	
 			
 		}
