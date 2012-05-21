@@ -18,9 +18,7 @@ License: http://www.opensource.org/licenses/mit-license.html
 
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
-        base.el = el;	
-		
-		log(base.$el);
+        base.el = el;
 		
 		base.init = function()
         {
@@ -69,7 +67,6 @@ License: http://www.opensource.org/licenses/mit-license.html
 			if (base.options.preload && (!$.browser.msie && $.browser.version != "8.0")) {
 				
 				base.$el.append('<div class="loading"><img src="'+base.options.loadimage+'" alt="Loading..." /></div>');
-				log("appended")
 				
 				switch (base.options.preloadMethod) {
 					
@@ -101,7 +98,6 @@ License: http://www.opensource.org/licenses/mit-license.html
 					
 					case 'bg':
 						// I'm so sorry . . . okay it's not that bad
-						// console.log('it is: ' + base.first.css('backgroundImage').toString());
 						var bgSrc = '/' + base.first.css('backgroundImage').toString().replace(/url\(/,'').replace(/\)/,'').replace(/"/g,'').replace(/https?:\/\/(.+)\.com\//,'').toString();
 						var bgImg = new Image();
 						bgImg.onload = function() {
@@ -138,7 +134,7 @@ License: http://www.opensource.org/licenses/mit-license.html
 		}
 		
 		base.buildPager = function() {			
-		//	debugger;
+
 			if (base.options.paging) {
 					
 				var pager =	$("<div></div>")
@@ -219,8 +215,6 @@ License: http://www.opensource.org/licenses/mit-license.html
 		
 		base.setupImages = function() {
 
-			log('setup run for ' + base.$el.attr('id'));
-
 			$(base.options.slide, base.$el).each(function(index) {
 				if (base.options.startIndex <= base.length && base.options.startIndex != 0) {
 					if (index != (base.options.startIndex - 1)) {
@@ -242,7 +236,6 @@ License: http://www.opensource.org/licenses/mit-license.html
 					}
 				}
 			});	
-			log('pager - '+base.$el.find('.pager').length);
 			
 			base.$el.find('.pager').show();
 		}
@@ -373,3 +366,18 @@ License: http://www.opensource.org/licenses/mit-license.html
     };
 	
 })(jQuery);
+
+/**
+ * jQuery 'onImagesLoaded' plugin v1.2.0 (Updated December 1, 2011)
+ * Fires callback functions when images have loaded within a particular selector.
+ *
+ * Copyright (c) Cirkuit Networks, Inc. (http://www.cirkuit.net), 2008-2011.
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ *
+ * For documentation and usage, visit "http://www.cirkuit.net/projects/jquery/onImagesLoad/"
+ */
+(function(b){b.fn.onImagesLoad=function(d){"function"==typeof d&&(d={all:d});var a=this;a.opts=b.extend({},b.fn.onImagesLoad.defaults,d);if(a.opts.selectorCallback&&!a.opts.all)a.opts.all=a.opts.selectorCallback;if(a.opts.itemCallback&&!a.opts.each)a.opts.each=a.opts.itemCallback;a.bindEvents=function(c,d,f){if(0===c.length)a.opts.callbackIfNoImagesExist&&f&&f(d);else{var e=[];c.jquery||(c=b(c));c.each(function(a){var g=this.src;if(!b.browser.msie)this.src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+b(this).bind("load",function(){0>jQuery.inArray(a,e)&&(e.push(a),e.length==c.length&&f&&f.call(d,d))});if(b.browser.msie){if(this.complete||void 0===this.complete)this.src=g}else this.src=g})}};var e=[];a.each(function(){if(a.opts.each){var c;c="IMG"==this.tagName?this:b("img",this);a.bindEvents(c,this,a.opts.each)}a.opts.all&&("IMG"==this.tagName?e.push(this):b("img",this).each(function(){e.push(this)}))});a.opts.all&&a.bindEvents(e,this,a.opts.all);return a.each(function(){})};b.fn.onImagesLoad.defaults=
+{all:null,each:null,callbackIfNoImagesExist:!1}})(jQuery);

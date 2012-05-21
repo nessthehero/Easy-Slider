@@ -1,10 +1,6 @@
 // Include this file after plugins.js and jQuery
 
-if (window.location.href.indexOf('xml/') != -1) {
-  var pB = '/xml/prebuilt/';
-} else {
-  var pB = '/prebuilt/';
-}
+var pB = '';
 
 // Accessible Tabs
 $.lazy({
